@@ -1,0 +1,5 @@
+/CMakeLists.txt
+
+#Idea folders for CLion
+/.idea/
+/cmake-build-debug/
