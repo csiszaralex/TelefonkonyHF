@@ -2,6 +2,7 @@
 #define TELEFON_STRING_H
 
 #include <iostream>
+#include "exceptions.h"
 
 class String {
     char* data;
@@ -34,7 +35,7 @@ public:
         if(data == NULL) return "";
         return data;
     }
-
+//TODO bool compare(String) --> ugyan az e
     String& operator=(const String& rhs) {
         if(this == &rhs) return *this;
         delete[] data;
@@ -63,20 +64,46 @@ public:
     String operator+(char rhs) const {
         return *this + String(rhs);
     }
-    ///+= char-ral?
     String& operator+=(const String& rhs) {
         *this = *this + rhs;
         return *this;
     }
-    ///const külön kell v mhet egybe
-    const char& operator[](size_t idx) const{
-        if(idx >= len) throw ;
+    char& operator[](size_t idx){
+        if(idx >= len) throw OutOfRangeException();
+        return data[idx];
+    }
+    const char& operator[](size_t idx)const {
+        if(idx >= len) throw OutOfRangeException();
         return data[idx];
     }
 
-
-
     ~String() { delete[] data; }
 };
+
+std::ostream& operator<<(std::ostream& os, const String& str) {
+    os <<str.c_str();
+    return os;
+}
+std::istream& operator>>(std::istream& is, String& str) {
+    unsigned char c;
+    str = String();
+    std::ios_base::fmtflags flags = is.flags();
+    is.setf(std::ios_base::skipws);
+    while(is >> c) {
+        is.unsetf(std::ios_base::skipws);
+        if(isspace(c)) {
+//            is.putback(c);
+            break;
+        } else {
+            str += c;
+        }
+    }
+    is.setf(flags);
+    return is;
+}
+String operator+(char ch, const String& str) {
+    return String(ch)+str;
+}
+
 
 #endif //TELEFON_STRING_H
