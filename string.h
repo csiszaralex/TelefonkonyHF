@@ -35,7 +35,19 @@ public:
         if(data == NULL) return "";
         return data;
     }
-//TODO bool compare(String) --> ugyan az e
+    bool compare(String& str) {
+        if(len != str.len) return false;
+        for(size_t i = 0; i<len;i++) {
+            if(data[i] != str.data[i]) return false;
+        }
+        return true;
+    }
+    bool compare(const char* c) {
+        String tmp(c);
+        bool all = compare(tmp);
+        return all;
+    }
+
     String& operator=(const String& rhs) {
         if(this == &rhs) return *this;
         delete[] data;

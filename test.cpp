@@ -74,5 +74,19 @@ int main() {
         EXPECT_STREQ("Kacsa", in3.c_str());
 
     }END
+    TEST(String, Compare){
+        String t("Test");
+        String t2("Test");
+        String u;
+        String ch('a');
+        EXPECT_EQ(true, t.compare(t));
+        EXPECT_EQ(true, t.compare(t2));
+        EXPECT_EQ(true, t2.compare(t));
+        EXPECT_EQ(false, u.compare(t));
+        EXPECT_EQ(false, t2.compare(u));
+        EXPECT_EQ(false, t.compare("asd"));
+        EXPECT_EQ(true, t2.compare(t2.c_str()));
+        EXPECT_EQ(true, ch.compare("a"));
+    }END
 }
 
