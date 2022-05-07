@@ -58,6 +58,7 @@ public:
         }
         data = new char[len+1];
         strcpy(data, rhs.data);
+        return *this;
     }
     String operator+(const String& rhs) const {
         String tmp;
@@ -81,11 +82,13 @@ public:
         return *this;
     }
     char& operator[](size_t idx){
-        if(idx >= len) throw OutOfRangeException();
+        if(idx < 0) { throw OutOfRangeException(idx, 0); }
+        if(idx >= len) throw OutOfRangeException(idx, len);
         return data[idx];
     }
     const char& operator[](size_t idx)const {
-        if(idx >= len) throw OutOfRangeException();
+        if(idx < 0) { throw OutOfRangeException(idx, 0); }
+        if(idx >= len) throw OutOfRangeException(idx, len);
         return data[idx];
     }
 
@@ -114,6 +117,9 @@ std::istream& operator>>(std::istream& is, String& str) {
     return is;
 }
 String operator+(char ch, const String& str) {
+    return String(ch)+str;
+}
+String operator+(char *ch, const String& str) {
     return String(ch)+str;
 }
 
