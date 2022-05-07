@@ -81,6 +81,12 @@ public:
         *this = *this + rhs;
         return *this;
     }
+    bool operator==(const char* c) {
+        return compare(c);
+    }
+    bool operator!=(const char* c) {
+        return !compare(c);
+    }
     char& operator[](size_t idx){
         if(idx < 0) { throw OutOfRangeException(idx, 0); }
         if(idx >= len) throw OutOfRangeException(idx, len);
@@ -106,8 +112,8 @@ std::istream& operator>>(std::istream& is, String& str) {
     is.setf(std::ios_base::skipws);
     while(is >> c) {
         is.unsetf(std::ios_base::skipws);
-        if(isspace(c)) {
-//            is.putback(c);
+        if(c == ' ' || c == '\n') {
+            is.putback(c);
             break;
         } else {
             str += c;

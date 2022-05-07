@@ -6,13 +6,13 @@
 #include "cim.h"
 
 class Ember {
+public:
     Nev nev;
     Cim cim;
     String telefon;
     Cim privCim;
 
-public:
-    Ember():nev("Test", "Eleke") {}
+    Ember() = default;
     Ember(const Ember& e){
         nev = e.nev;
         cim = e.cim;

@@ -5,15 +5,15 @@
 #include "string.h"
 
 class Cim {
+public:
     int postal;
     String city;
     String address;
-public:
-    Cim(): postal(-1), city(), address() {}
-    Cim(String cim) {
-        //TODO
-    }
-    String get_cim() {
+    String type;
+    String number;
+
+    Cim(): postal(-1), city(), address(), type(), number() {}
+    String get_cim() const {
         if(postal==-1) return "";
         std::stringstream ss;
         ss << address;
@@ -22,8 +22,8 @@ public:
         String tmp =  addr + " " + city + ", " + address;
         return tmp;
     }
-    String get_city() {return city;}
-    int get_postal() {return postal;}
+    String get_city() const {return city;}
+    int get_postal() const {return postal;}
 
     virtual ~Cim() = default;
 };
