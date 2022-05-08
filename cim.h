@@ -27,5 +27,10 @@ public:
 
     virtual ~Cim() = default;
 };
+std::ostream& operator<<(std::ostream& os, const Cim& c) {
+    if(c.postal != -1)
+        os << c.postal << " " << c.city << ", " << c.address << " " << c.type << " " << c.number << ".";
+    return os;
+}
 
 #endif //TELEFON_CIM_H

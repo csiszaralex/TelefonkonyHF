@@ -28,5 +28,17 @@ class ArgumentCountError: public Exception {
 public:
     ArgumentCountError(int db): Exception("Nem megfelelő argumentum szam", -3) {}
 };
+class CommandError:public Exception {
+public:
+    CommandError(): Exception("Nincs ilyen parancs", -4) {}
+};
+class NoPhoneNumber: public Exception {
+public:
+    NoPhoneNumber(char* keresett): Exception("ilyen nins", 33) {}
+};
+class AlreadyExits: public Exception {
+public:
+    AlreadyExits(): Exception("Mar van ilyen", 34) {}
+};
 
 #endif //TELEFON_EXCEPTION_H

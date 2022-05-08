@@ -23,6 +23,17 @@ public:
         delete[] data;
         data = tmp;
     }
+    void remove(size_t idx) {
+        T** tmp = new T*[size-1];
+        for (size_t i = 0; i < size; ++i) {
+            if(i < idx) tmp[i] = data[i];
+            else if(i != idx) tmp[i-1] = data[i];
+        }
+        size--;
+        delete data[idx];
+        delete[] data;
+        data = tmp;
+    }
 
 
     bool empty() { return (size == 0); }

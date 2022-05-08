@@ -35,14 +35,14 @@ public:
         if(data == NULL) return "";
         return data;
     }
-    bool compare(String& str) {
+    bool compare(String& str) const {
         if(len != str.len) return false;
         for(size_t i = 0; i<len;i++) {
             if(data[i] != str.data[i]) return false;
         }
         return true;
     }
-    bool compare(const char* c) {
+    bool compare(const char* c)const  {
         String tmp(c);
         bool all = compare(tmp);
         return all;

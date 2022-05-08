@@ -10,7 +10,7 @@ public:
 
     Nev():vezetekNev(), keresztNev(), beceNev(){}
     Nev(const String& vezetek, const String& kereszt, const String& bece = ""):vezetekNev(vezetek), keresztNev(kereszt), beceNev(bece)  {}
-    String get_nev() {
+    String get_nev() const {
         String tmp = vezetekNev + " " + keresztNev;
         if(!beceNev.compare("")) {
             tmp += " (";
@@ -20,5 +20,9 @@ public:
     }
     virtual ~Nev() = default;
 };
+std::ostream& operator<<(std::ostream& os, const Nev& n) {
+    os << n.get_nev();
+    return os;
+}
 
 #endif //TELEFON_NEV_H
