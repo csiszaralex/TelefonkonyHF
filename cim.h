@@ -15,7 +15,7 @@ public:
     String get_cim() const {
         if(postal==-1) return "";
         std::stringstream ss;
-        ss << address;
+        ss << postal;
         String tmp = ss.str().c_str();
         tmp += " ";
         tmp += city + " " + address + " "+type + " " + number;
