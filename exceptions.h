@@ -34,7 +34,7 @@ public:
 };
 class NoPhoneNumber: public Exception {
 public:
-    NoPhoneNumber(char* keresett): Exception("ilyen nins", 33) {}
+    NoPhoneNumber(const char* keresett): Exception("ilyen nins", 33) {}
 };
 class AlreadyExits: public Exception {
 public:
