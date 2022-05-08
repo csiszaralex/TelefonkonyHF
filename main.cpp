@@ -1,15 +1,11 @@
 #include <fstream>
-
 #include "list.h"
 #include "string.h"
 #include "ember.h"
 
-int main(int argc, char *argv[]) {
-    if(argc < 2) throw ArgumentCountError(argc);
-    if(strcmp(argv[1], "show") != 0 && strcmp(argv[1], "add") != 0 && strcmp(argv[1], "remove") != 0) throw CommandError();
+#define CPORTA
 
-    List<Ember> emberek;
-    //region File read
+void readFile(List<Ember>* emberek) {
     std::ifstream file;
     file.open("../adatok.dat");
     if(file.is_open()) {
@@ -21,29 +17,55 @@ int main(int argc, char *argv[]) {
             if(db >= 9) file >> tmp->nev.get_bece();
             if(db >= 14) file >> tmp->privCim;
 
-            emberek.push_back(tmp);
+            emberek->push_back(tmp);
         }
 
         file.close();
     }
     else throw FileError("../adatok.dat");
-    //endregion
+}
+void writeFile(List<Ember>* emberek) {
+    std::ofstream os;
+    os.open("../adatok.dat");
+    for (size_t i = 0; i < emberek->get_size(); ++i) {
+        int meret = 8;
+        if((*emberek)[i].nev.get_bece() != "") meret++;
+        if((*emberek)[i].privCim.get_postal() != -1) meret+=5;
 
-    if(strcmp(argv[1], "show") == 0) {
-        if(emberek.get_size() == 0)
-            std::cout << "A telefonkonyv meg ures" << std::endl;
-        for (size_t i = 0; i < emberek.get_size(); ++i) {
-            std::cout << emberek[i] << std::endl;
-        }
+        os << meret << " " << (*emberek)[i].file();
+        os << "\n";
     }
+    os.close();
+}
+void show(List<Ember>* emberek) {
+    if(emberek->get_size() == 0)
+        std::cout << "A telefonkonyv meg ures" << std::endl;
+    for (size_t i = 0; i < emberek->get_size(); ++i) {
+        std::cout << (*emberek)[i] << std::endl;
+    }
+}
+void remove(List<Ember>* emberek, char* telo) {
+    int id = -1;
+    for (int i = 0; i < emberek->get_size(); ++i) {
+        if((*emberek)[i].telefon == telo) {id = i;break;}
+    }
+    if(id == -1) throw NoPhoneNumber(telo);
+    emberek->remove(id);
+}
+
+
+
+int releaseMain(int argc, char *argv[]) {
+    if(argc < 2) throw ArgumentCountError(argc);
+    if(strcmp(argv[1], "show") != 0 && strcmp(argv[1], "add") != 0 && strcmp(argv[1], "remove") != 0) throw CommandError();
+
+    List<Ember> emberek;
+    readFile(&emberek);
+
+    if(strcmp(argv[1], "show") == 0) { show(&emberek); }
     if(strcmp(argv[1], "remove") == 0) {
         if(argc < 3) throw ArgumentCountError(argc);
-        int id = -1;
-        for (int i = 0; i < emberek.get_size(); ++i) {
-            if(emberek[i].telefon == argv[2]) {id = i;break;}
-        }
-        if(id == -1) throw NoPhoneNumber(argv[2]);
-        emberek.remove(id);
+        remove(&emberek, argv[2]);
     }
     if(strcmp(argv[1], "add") == 0) {
         if(argc < 10 || argc > 16 || (argc > 11 && argc < 16)) throw ArgumentCountError(argc);
@@ -68,17 +90,18 @@ int main(int argc, char *argv[]) {
         emberek.push_back(tmp);
     }
 
-    //#region File write
-    std::ofstream os;
-    os.open("../adatok.dat");
-    for (size_t i = 0; i < emberek.get_size(); ++i) {
-        int meret = 8;
-        if(emberek[i].nev.get_bece() != "") meret++;
-        if(emberek[i].privCim.get_postal() != -1) meret+=5;
+    writeFile(&emberek);
+}
 
-        os << meret << " " << emberek[i].file();
-        os << "\n";
-    }
-    os.close();
-    //#endregion
+int testMain() {
+    std::cout << "TESZT";
+    return 0;
+}
+
+int main(int argc, char** argv) {
+#if defined(CPORTA)
+    return testMain();
+#else
+    return releaseMain(argc, argv);
+#endif
 }
