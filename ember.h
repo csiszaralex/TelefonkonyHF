@@ -1,7 +1,6 @@
 #ifndef TELEFON_EMBER_H
 #define TELEFON_EMBER_H
 
-#include "string.h"
 #include "nev.h"
 #include "cim.h"
 
@@ -13,16 +12,13 @@ public:
     Cim privCim;
 
     Ember() = default;
-    String file() {
+    String file() const {
         String tmp;
-        String post(std::to_string(cim.postal).c_str());
-        tmp += nev.vezetekNev+" "+nev.keresztNev+" ";
-        tmp+=post+" ";
-        tmp+=cim.city+" "+cim.address+" "+cim.type+" "+cim.number+" "+telefon+" "+nev.beceNev;
-        if(privCim.postal != -1) {
+        tmp += nev.get_nev() + " ";
+        tmp += cim.get_cim()+" "+telefon+" "+nev.get_bece();
+        if(privCim.get_postal() != -1) {
             tmp+=" ";
-            tmp+=std::to_string(privCim.postal).c_str();
-            tmp+=" "+privCim.city+" "+privCim.address+" "+privCim.type+" "+privCim.number;
+            tmp+=privCim.get_cim();
         }
         return tmp;
     }
