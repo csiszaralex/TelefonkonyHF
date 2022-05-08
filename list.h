@@ -48,10 +48,13 @@ public:
         for (size_t i = 0; i < size; ++i) {
             delete data[i];
         }
-        delete[] data;
+//        delete[] data;
         size = 0;
     }
-    virtual ~List() { clear(); }
+    virtual ~List() {
+        clear();
+        delete[] data;
+    }
 
 };
 
