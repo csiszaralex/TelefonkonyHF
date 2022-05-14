@@ -1,8 +1,9 @@
 #ifndef TELEFON_EMBER_H
 #define TELEFON_EMBER_H
 
-#include "nev.h"
-#include "cim.h"
+#include "nev.cpp"
+#include "cim.cpp"
+#include "string.cpp"
 
 class Ember {
 public:
@@ -17,7 +18,7 @@ public:
         tmp += nev.get_nev() + " ";
         tmp += cim.get_cim()+" "+telefon+" "+nev.get_bece();
         if(privCim.get_postal() != -1) {
-            tmp+=" ";
+            tmp += " ";
             tmp+=privCim.get_cim();
         }
         return tmp;
