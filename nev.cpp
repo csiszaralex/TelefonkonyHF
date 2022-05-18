@@ -1,7 +1,7 @@
 #include "nev.h"
 
-String Nev::get_fullnev() const {
-    String tmp = vezetekNev + " " + keresztNev;
+MyString Nev::get_fullnev() const {
+    MyString tmp = vezetekNev + " " + keresztNev;
     if(!beceNev.compare("")) {
         tmp += " (";
         tmp+=beceNev+")";

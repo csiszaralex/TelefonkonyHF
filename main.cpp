@@ -2,7 +2,6 @@
 #include "gtest_lite.h"
 #include "memtrace.h"
 #include "list.h"
-#include "string.h"
 #include "ember.h"
 
 //#define CPORTA
@@ -13,15 +12,15 @@ void readFile(List<Ember>* emberek, const char* fileName) {
     if(file.is_open()) {
         int db;
         while(file >> db) {
-            Ember* tmp = new Ember();
+            auto tmp = new Ember();
             if(db < 8 || db > 14 || (db > 9 && db < 14)) {
                 emberek->clear();
                 delete tmp;
                 throw FileError("Hibas db szam");
             }
-            if(db >= 8)file >> tmp->nev >> tmp->cim >> tmp->telefon;
-            if(db >= 9) file >> tmp->nev.get_bece();
-            if(db >= 14) file >> tmp->privCim;
+            if(db >= 8)file >> *tmp;
+            if(db >= 9) file >> tmp->get_bece();
+            if(db >= 14) file >> tmp->get_priv_cim();
 
             emberek->push_back(tmp);
         }
@@ -36,8 +35,8 @@ void writeFile(List<Ember>* emberek, const char* fileName) {
     if(os.is_open()) {
     for (size_t i = 0; i < emberek->get_size(); ++i) {
         int meret = 8;
-        if((*emberek)[i].nev.get_bece() != "") meret++;
-        if((*emberek)[i].privCim.get_postal() != -1) meret+=5;
+        if((*emberek)[i].has_bece()) meret++;
+        if((*emberek)[i].has_priv()) meret+=5;
 
         os << meret << " " << (*emberek)[i].file();
         os << "\n";
@@ -48,55 +47,102 @@ void writeFile(List<Ember>* emberek, const char* fileName) {
 }
 void show(List<Ember>* emberek) {
     if(emberek->get_size() == 0)
-        std::cout << "A telefonkonyv meg ures" << std::endl;
+        std::cout << "\tA telefonkonyv meg ures" << std::endl;
     for (size_t i = 0; i < emberek->get_size(); ++i) {
-        std::cout << (*emberek)[i] << std::endl;
+        std::cout << "    " <<(*emberek)[i] << std::endl;
     }
 }
 void remove(List<Ember>* emberek, const char* telo) {
     int id = -1;
     for (size_t i = 0; i < emberek->get_size(); ++i) {
-        if((*emberek)[i].telefon == telo) {id = (int)i;break;}
+        if((*emberek)[i].get_telefon() == telo) {id = (int)i;break;}
     }
     if(id == -1) throw NoPhoneNumber(telo);
     emberek->remove(id);
 }
+void help() {
+    std::cout << "Kerem valasszon a kovetkezo pciok kozul:" << std::endl;
+    std::cout << "\texit \t\t- Kilepes a programbol" << std::endl;
+    std::cout << "\thelp \t\t- Segito menu" << std::endl;
+    std::cout << "\tshow \t\t- Elmentett adatok listazasa" << std::endl;
+    std::cout << "\tadd <VezN> <KerN> <Cim> <TelSz> [BeceN] [PrivCim] - Uj adat felvetele" << std::endl;
+    std::cout << "\tremove <telefonszam> \t\t- Meglevo adat torlese telefonszam alapjan" << std::endl;
 
-int releaseMain(int argc, char *argv[]) {
-    if(argc < 2) throw ArgumentCountError(argc);
-    if(strcmp(argv[1], "show") != 0 && strcmp(argv[1], "add") != 0 && strcmp(argv[1], "remove") != 0) throw CommandError();
+}
+
+std::string kivesz(std::string& line){
+    std::string buffer;
+    bool tobbszo = false;
+    for (char i : line) {
+        if (isspace(i)){
+            tobbszo = true;
+            break;
+        }
+    }
+    std::stringstream ss;
+    ss << line;
+    getline(ss, buffer, ' ');
+    if (tobbszo){
+        getline(ss, line);
+    } else {
+        line = "";
+    }
+    return buffer;
+}
+
+int releaseMain() {
 
     List<Ember> emberek;
     readFile(&emberek, "../adatok.dat");
 
-    if(strcmp(argv[1], "show") == 0) { show(&emberek); }
-    if(strcmp(argv[1], "remove") == 0) {
-        if(argc < 3) throw ArgumentCountError(argc);
-        remove(&emberek, argv[2]);
+    MyString line;
+    line.set_separator('\n');
+    std::cout << ">>>";
+    while(std::cin >> line) {
+        MyString adat;
+        line.kivesz(adat);
+        if(adat == "exit") break;
+        else if(adat == "help") help();
+        else if(adat == "show") show(&emberek);
+        else if(adat == "remove") {
+            if(line.empty()) throw KevesAdat(2);
+            line.kivesz(adat);
+            remove(&emberek, adat.c_str());
+        }
+        else if(adat == "add"){
+            auto tmp = new Ember;
+            MyString vez, ker;
+            line.kivesz(vez);
+            line.kivesz(ker);
+            tmp->set_nev(vez.c_str(), ker.c_str());
+            MyString p, c, a, t, num;
+            line.kivesz(p);
+            line.kivesz(c);
+            line.kivesz(a);
+            line.kivesz(t);
+            line.kivesz(num);
+            tmp->set_cim(p.toInt(), c.c_str(), a.c_str(), t.c_str(), num.c_str());
+            MyString tel;
+            line.kivesz(tel);
+            tmp->set_tel(tel.c_str());
+            if(!line.empty()) {
+                MyString bec;
+                line.kivesz(bec);
+                tmp->set_bece(bec.c_str());
+            }
+            if(!line.empty()) {
+                line.kivesz(p);
+                line.kivesz(c);
+                line.kivesz(a);
+                line.kivesz(t);
+                line.kivesz(num);
+                tmp->set_priv_cim(p.toInt(), c.c_str(), a.c_str(), t.c_str(), num.c_str());
+            }
+            emberek.push_back(tmp);
+        }
+        else throw CommandError();
+        std::cout << ">>>";
     }
-    if(strcmp(argv[1], "add") == 0) {
-        if(argc < 10 || argc > 16 || (argc > 11 && argc < 16)) throw ArgumentCountError(argc);
-
-        Ember* tmp = new Ember();
-        if(argc >= 10) {
-            tmp->nev.set_nev(argv[2], argv[3]);
-            tmp->cim.set_cim(std::stoi(argv[4]), argv[5], argv[6], argv[7], argv[8]);
-            tmp->telefon = argv[9];
-        }
-        if(argc >= 11)
-            tmp->nev.set_bece(argv[10]);
-        if(argc >= 16)
-        {
-            tmp->privCim.set_cim(std::stoi(argv[11]), argv[12], argv[13], argv[14], argv[15]);
-        }
-        int id = -1;
-        for (size_t i = 0; i < emberek.get_size(); ++i) {
-            if(emberek[i].telefon == argv[9]) {id = (int)i;break;}
-        }
-        if(id != -1) throw AlreadyExits();
-        emberek.push_back(tmp);
-    }
-
     writeFile(&emberek, "../adatok.dat");
     return 0;
 }
@@ -129,10 +175,10 @@ int testMain() {
     return 0;
 }
 
-int main(int argc, char** argv) {
+int main() {
 #if defined(CPORTA)
     return testMain();
 #else
-    return releaseMain(argc, argv);
+    return releaseMain();
 #endif
 }

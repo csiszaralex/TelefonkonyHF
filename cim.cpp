@@ -1,10 +1,10 @@
 #include "cim.h"
 
-String Cim::get_cim() const {
+MyString Cim::get_cim() const {
     if(postal==-1) return "";
     std::stringstream ss;
     ss << postal;
-    String tmp = ss.str().c_str();
+    MyString tmp = ss.str().c_str();
     tmp += " ";
     tmp += city + " " + address + " "+type + " " + number;
     return tmp;

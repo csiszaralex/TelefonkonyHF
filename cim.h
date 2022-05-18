@@ -2,18 +2,18 @@
 #define TELEFON_CIM_H
 
 #include <sstream>
-#include "string.cpp"
+#include "mystring.h"
 
 class Cim {
     int postal;
-    String city;
-    String address;
-    String type;
-    String number;
+    MyString city;
+    MyString address;
+    MyString type;
+    MyString number;
 public:
 
     Cim(): postal(-1), city(), address(), type(), number() {}
-    String get_cim() const;
+    MyString get_cim() const;
     void set_cim(int p, const char *c, const char * a,const  char * t,const char * num);
     int get_postal() const { return postal; }
 

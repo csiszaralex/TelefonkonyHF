@@ -24,13 +24,13 @@ class FileError: public Exception {
 public:
     FileError(const char* file): Exception("File hiba", -6) {}
 };
-class ArgumentCountError: public Exception {
-public:
-    ArgumentCountError(int db): Exception("Nem megfelelő argumentum szam", -3) {}
-};
 class CommandError:public Exception {
 public:
     CommandError(): Exception("Nincs ilyen parancs", -4) {}
+};
+class KevesAdat: public Exception {
+public:
+    KevesAdat(int elvart): Exception("Keves adat", 10) {}
 };
 class NoPhoneNumber: public Exception {
 public:
