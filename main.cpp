@@ -70,26 +70,6 @@ void help() {
 
 }
 
-std::string kivesz(std::string& line){
-    std::string buffer;
-    bool tobbszo = false;
-    for (char i : line) {
-        if (isspace(i)){
-            tobbszo = true;
-            break;
-        }
-    }
-    std::stringstream ss;
-    ss << line;
-    getline(ss, buffer, ' ');
-    if (tobbszo){
-        getline(ss, line);
-    } else {
-        line = "";
-    }
-    return buffer;
-}
-
 int releaseMain() {
 
     List<Ember> emberek;
