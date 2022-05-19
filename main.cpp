@@ -1,14 +1,20 @@
 #include <fstream>
-#include "gtest_lite.h"
 #include "memtrace.h"
 #include "list.h"
 #include "ember.h"
 
 //#define CPORTA
+#ifdef CPORTA
+    #include "gtest_lite.h"
+#endif
 
 void readFile(List<Ember>* emberek, const char* fileName) {
     std::ifstream file;
     file.open(fileName);
+    if(!file.good()) {
+        std::ofstream output(fileName);
+        file.open(fileName);
+    }
     if(file.is_open()) {
         int db;
         while(file >> db) {
@@ -71,9 +77,14 @@ void help() {
 }
 
 int releaseMain() {
-
+    MyString datFilePath = "./adatok.dat";
     List<Ember> emberek;
-    readFile(&emberek, "../adatok.dat");
+    try {
+        readFile(&emberek, datFilePath.c_str());
+    } catch (FileError& e) {
+        std::cout << "\t\tHiba a fajl megniytasakor" << std::endl;
+        abort();
+    }
 
     MyString line;
     line.set_separator('\n');
@@ -84,10 +95,17 @@ int releaseMain() {
         if(adat == "exit") break;
         else if(adat == "help") help();
         else if(adat == "show") show(&emberek);
+        else if(adat == "save") writeFile(&emberek, datFilePath.c_str());
         else if(adat == "remove") {
-            if(line.empty()) throw KevesAdat(2);
-            line.kivesz(adat);
-            remove(&emberek, adat.c_str());
+            try {
+                if (line.empty()) throw KevesAdat(2);
+                line.kivesz(adat);
+                remove(&emberek, adat.c_str());
+            } catch (KevesAdat& e) {
+                std::cout<< "\tKeves Adat!" << std::endl;
+            } catch (NoPhoneNumber& e) {
+                std::cout << "\tNem letezo telefonszam" << std::endl;
+            }
         }
         else if(adat == "add"){
             auto tmp = new Ember;
@@ -120,17 +138,17 @@ int releaseMain() {
             }
             emberek.push_back(tmp);
         }
-        else throw CommandError();
+        else std::cout << "\tHIBAS PARANCS!" << std::endl;
         std::cout << ">>>";
     }
-    writeFile(&emberek, "../adatok.dat");
+    writeFile(&emberek, datFilePath.c_str());
     return 0;
 }
-
+#ifdef CPORTA
 int testMain() {
     List<Ember> emberek;
     TEST(telefonkony,readFile) {
-            EXPECT_THROW(readFile(&emberek, "nincs.dat"), FileError);
+            EXPECT_NO_THROW(readFile(&emberek, "nincs.dat"));
             EXPECT_THROW(readFile(&emberek, "hibas.dat"), FileError);
             EXPECT_EQ(0, emberek.get_size());
             EXPECT_NO_THROW(readFile(&emberek, "ures.dat"));
@@ -151,9 +169,58 @@ int testMain() {
             EXPECT_NO_THROW(remove(&emberek, "123456789"));
             EXPECT_EQ(3, emberek.get_size());
         } END
+    TEST(telefonkonyv, show) {
+            show(&emberek);
+    } END
+    TEST(telefonkonyv, help) {
+            help();
+    } END
+    TEST(telefonkonyv, add) {
+            int count = emberek.get_size();
+            auto tmp = new Ember;
+            tmp->set_nev("Teszt", "Elek");
+            tmp->set_cim(1111, "Budapest", "Kis", "utca", "13");
+            tmp->set_tel("+36701234568");
+            tmp->set_bece("Teszti");
+            tmp->set_priv_cim(123, "Kiskunfelegyhaza", "Szabo", "utca", "72");
+            emberek.push_back(tmp);
+            EXPECT_EQ(count+1, emberek.get_size());
+    } END
+    TEST(telefonkonyv, << operators) {
+        std::stringstream ss;
+        ss << emberek[0];
+    } END
+    TEST(String, OutOfRange) {
+        MyString m = "asd";
+        EXPECT_THROW(m[5], OutOfRangeException);
+     } END
+    TEST(String, Kivesz) {
+     MyString line = "teszt adat";
+             EXPECT_STREQ("teszt adat", line.c_str());
+             MyString szo;
+             line.kivesz(szo);
+             EXPECT_STREQ("teszt", szo.c_str());
+             EXPECT_STREQ("adat", line.c_str());
+             line.kivesz(szo);
+            EXPECT_STREQ("adat", szo.c_str());
+            EXPECT_EQ(true, line.empty());
+    } END
+    TEST(String, Szamma) {
+        MyString tmp = "523";
+            EXPECT_EQ(526, tmp.toInt()+3);
+    } END
+    TEST(String, Egyeb) {
+        MyString tmp1, tmp2;
+        char c = 'a';
+        tmp1 = tmp1 + tmp2;
+        tmp1 = tmp1 + c;
+        tmp1 = c + tmp1;
+            EXPECT_EQ('a', tmp1[0]);
+    } END
 
     return 0;
 }
+#endif
 
 int main() {
 #if defined(CPORTA)
