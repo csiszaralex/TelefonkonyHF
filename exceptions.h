@@ -10,9 +10,12 @@ protected:
     std::string err_msg;
 public:
     Exception(const std::string msg, int num): err_num(num),  err_msg(msg) {}
-    virtual ~Exception() throw() {}
+    ~Exception() throw() override = default;
 
-    virtual const char* what() const throw() { return err_msg.c_str(); }
+    virtual const char* what() const throw() {
+        std::string ki = "\n>>>" + err_msg + "\n\n";
+        return ki.c_str();
+    }
     virtual int getErrorNumber() const throw() { return err_num; }
 };
 
@@ -22,23 +25,19 @@ public:
 };
 class FileError: public Exception {
 public:
-    FileError(const char* file): Exception("File hiba", -6) {}
-};
-class CommandError:public Exception {
-public:
-    CommandError(): Exception("Nincs ilyen parancs", -4) {}
+    FileError(const char* file): Exception("Hiba a file megnyitasa kozben.", 2) {}
 };
 class KevesAdat: public Exception {
 public:
-    KevesAdat(int elvart): Exception("Keves adat", 10) {}
+    KevesAdat(int elvart): Exception("Keves adat", 4) {}
 };
 class NoPhoneNumber: public Exception {
 public:
-    NoPhoneNumber(const char* keresett): Exception("ilyen nins", 33) {}
+    NoPhoneNumber(const char* keresett): Exception("ilyen nins", 5) {}
 };
 class AlreadyExits: public Exception {
 public:
-    AlreadyExits(): Exception("Mar van ilyen", 34) {}
+    AlreadyExits(): Exception("Mar van ilyen", 6) {}
 };
 
 #endif //TELEFON_EXCEPTION_H
