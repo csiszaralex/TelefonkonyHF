@@ -3,6 +3,24 @@
 A *programozás alapjai 2* tárgy nagy házi feladata  
 40 / 40 pont
 
+## Tartalomjegyzék
+
+1. [A program célja](#1-A-program-célja)
+2. [A program működsének feltételei](#2-A-program-működésének-feltételei)
+3. [A program futtatása](#3-A-program-futtatása)
+    * [Kilépés](#3.1-Kilépés)
+    * [Elérhető parancsok listázása](#3.2-Elérhető-parancsok-listázása)
+    * [Adatok mentése](#3.3-Adatok-mentése)
+    * [Felvétel](#3.4-Felvétel)
+    * [Törlés](#3.5-Törlés)
+    * [Összes adat listázása](#3.6-Összes-adat-listázása)
+4. [Futási hibák](#4-Futási-hibák)
+5. [UML](#5-uml)
+6. [Kiegészítés](#6-kiegészítés)
+    * [UML osztályok kódból](#61-uml-osztyok-kdbl)
+
+
+
 ---
 
 ## 1 A program célja
@@ -42,7 +60,7 @@ Meglévő adat törlésére az alávvi paranccsal van lehetőségünk:
 
 Mivel a telefonszám az egyetlen egyedi információ, így kizáólag annak megadásával van lehetőség egy adat törlésére.  
 
-### 3.6 Összes adatlistázása
+### 3.6 Összes adat listázása
 
 A telefonkönyvben szereplő összes adat kiírása a `show` parancs kiadását követően jelenik meg.
 
@@ -63,3 +81,32 @@ A program futása során a keletkező hibák hatására leáll és a szabványos
 ## 5 UML
 
 ![A program UML abraja](./UML.png "UML")
+
+## 6 Kiegészítés
+
+### 6.1 UML osztáyok kódból
+
+```mermaid
+classDiagram
+
+MyString "3" *-- Nev
+MyString "4" *-- Cim
+Ember --* "1" Nev
+Ember --* "1..2" Cim
+List <|.. Ember: bind \n Ember
+
+class List
+class Nev
+class Ember
+class Cim
+class MyString {
+    -char* data
+    +MyString() void
+}
+
+
+<<template>> List
+link List "https://mermaid-js.github.io/mermaid/#/./classDiagram"
+
+%% Komment
+```
