@@ -8,16 +8,16 @@ A *programozás alapjai 2* tárgy nagy házi feladata
 1. [A program célja](#1-A-program-célja)
 2. [A program működsének feltételei](#2-A-program-működésének-feltételei)
 3. [A program futtatása](#3-A-program-futtatása)
-    * [Kilépés](#3.1-Kilépés)
-    * [Elérhető parancsok listázása](#3.2-Elérhető-parancsok-listázása)
-    * [Adatok mentése](#3.3-Adatok-mentése)
-    * [Felvétel](#3.4-Felvétel)
-    * [Törlés](#3.5-Törlés)
-    * [Összes adat listázása](#3.6-Összes-adat-listázása)
+    * [Kilépés](#31-Kilépés)
+    * [Elérhető parancsok listázása](#32-Elérhető-parancsok-listázása)
+    * [Adatok mentése](#33-Adatok-mentése)
+    * [Felvétel](#34-Felvétel)
+    * [Törlés](#35-Törlés)
+    * [Összes adat listázása](#36-Összes-adat-listázása)
 4. [Futási hibák](#4-Futási-hibák)
 5. [UML](#5-uml)
 6. [Kiegészítés](#6-kiegészítés)
-    * [UML osztályok kódból](#61-uml-osztyok-kdbl)
+    * [UML osztályok kódból](#61-uml-osztályok-kódóbl)
 
 
 
@@ -84,7 +84,7 @@ A program futása során a keletkező hibák hatására leáll és a szabványos
 
 ## 6 Kiegészítés
 
-### 6.1 UML osztáyok kódból
+### 6.1 UML osztályok kódból
 
 ```mermaid
 classDiagram
